@@ -19,7 +19,7 @@ class MemberExtensionTest extends LoginTestCase
             ->will($this->returnValue($mockDataList));
 
         $extension = new MemberExtension;
-        $extension->setOwner($mockMember, 'Member');
+        $extension->setOwner($mockMember);
         $extension->onBeforeDelete();
     }
 }

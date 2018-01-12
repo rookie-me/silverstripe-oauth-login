@@ -5,9 +5,27 @@ SilverStripe OAuth2-based login functionality, based on the PHP League's [OAuth2
 ### What this module does
 This module adds “Log in with &lt;provider&gt;” buttons to SilverStripe’s default login form, which will authenticate a user with the chosen provider. It also provides configurable access token scopes (or permission levels) and field mapping for storing user data on registration.
 
+This is an attempt at bridging the gap between the original SilverStripe OAuth Login and the new login workflow present in SilverStripe 4.
+
+## Requirements
+
+- SilverStripe 4.x
+- SilverStripe OAuth (installed via composer)
+
 ## Installation
 
 This module must be installed with composer. Run `composer require bigfork/silverstripe-oauth-login:*` from the command line, and then run a `dev/build`.
+
+Note: if you'd like to install this particular fork, add
+```json
+   "repositories" : [
+        {
+            "type":"vcs",
+            "url":"https://github.com/rookie-me/silverstripe-oauth-login"
+        }
+    ]
+```
+to your `composer.json`.
 
 ## Configuration
 
@@ -18,11 +36,15 @@ To show a login button for a configured provider, you must add them to the new `
 Following on from the Facebook example in the [SilverStripe OAuth2 module documentation](https://github.com/bigfork/silverstripe-oauth#configuration):
 
 ```yml
-Injector:
-  ProviderFactory:
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Security\Security:
+    properties:
+      Authenticators:
+        oauth: %$Bigfork\SilverStripeOAuth\Client\Authenticator\OAuthAuthenticator
+  Bigfork\SilverStripeOAuth\Client\Factory\ProviderFactory:
     properties:
       providers:
-        'Facebook': '%$FacebookProvider'
+        Facebook: '%$FacebookProvider'
   FacebookProvider:
     class: 'League\OAuth2\Client\Provider\Facebook'
     constructor:
@@ -30,7 +52,8 @@ Injector:
         clientId: '12345678987654321'
         clientSecret: 'geisjgoesingoi3h1521onnro12rin'
         graphApiVersion: 'v2.6'
-Bigfork\SilverStripeOAuth\Client\Authenticator\Authenticator:
+        redirectUri: 'http://mysite.local/Security/login/oauth/authLogin/'
+Bigfork\SilverStripeOAuth\Client\Authenticator\OAuthAuthenticator:
   providers:
     'Facebook': # Matches the key for '$%FacebookProvider' above
       name: 'The Facebooks'
@@ -48,7 +71,7 @@ You can customise the look of the login actions for each provider by creating th
 </button>
 ```
 
-The `Bigfork\SilverStripeOAuth\Client\Form\LoginForm` class also provides two extension points, `updateFields` and `updateActions` for further customisation.
+The `Bigfork\SilverStripeOAuth\Client\Form\OAuthLoginForm` class also provides two extension points, `updateFields` and `updateActions` for further customisation.
 
 ---
 
@@ -103,3 +126,8 @@ As it’s possible, and likely, for users to have accounts for multiple OAuth pr
 - Change the `Member.unique_identifier_field` config setting to something other than `Email` (for example, `ID`)
 - Update the config for [`GenericMemberMapper`](#using-genericmembermapper) for your providers, but omit the `Email` field
 - Create a [custom mapper](#using-a-custom-mapper) that doesn’t import email addresses
+
+
+## Notes
+There are some components of the original module that have yet to be updated:
+- Unit Tests 

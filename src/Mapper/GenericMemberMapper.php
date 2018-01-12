@@ -2,9 +2,9 @@
 
 namespace Bigfork\SilverStripeOAuth\Client\Mapper;
 
-use Config;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Member;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Member;
 
 class GenericMemberMapper implements MemberMapperInterface
 {

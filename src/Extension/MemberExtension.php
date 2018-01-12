@@ -2,9 +2,10 @@
 
 namespace Bigfork\SilverStripeOAuth\Client\Extension;
 
-use FieldList;
+use Bigfork\SilverStripeOAuth\Client\Model\OAuthPassport;
+use SilverStripe\ORM\DataExtension;
 
-class MemberExtension extends \Extension
+class MemberExtension extends DataExtension
 {
     /**
      * @var array
@@ -17,7 +18,7 @@ class MemberExtension extends \Extension
      * @var array
      */
     private static $has_many = [
-        'Passports' => 'OAuthPassport'
+        'Passports' => OAuthPassport::class
     ];
 
     /**

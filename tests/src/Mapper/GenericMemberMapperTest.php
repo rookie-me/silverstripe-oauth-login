@@ -4,8 +4,9 @@ namespace Bigfork\SilverStripeOAuth\Client\Test\Mapper;
 
 use Bigfork\SilverStripeOAuth\Client\Mapper\GenericMemberMapper;
 use Bigfork\SilverStripeOAuth\Client\Test\LoginTestCase;
-use Config;
-use Member;
+use League\OAuth2\Client\Provider\GenericResourceOwner;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Security\Member;
 use ReflectionMethod;
 
 class GenericMemberMapperTest extends LoginTestCase
@@ -33,11 +34,11 @@ class GenericMemberMapperTest extends LoginTestCase
             ]
         ];
 
-        Config::inst()->remove('Bigfork\SilverStripeOAuth\Client\Mapper\GenericMemberMapper', 'mapping');
-        Config::inst()->update('Bigfork\SilverStripeOAuth\Client\Mapper\GenericMemberMapper', 'mapping', $mapping);
+        Config::inst()->remove(GenericMemberMapper::class, 'mapping');
+        Config::inst()->update(GenericMemberMapper::class, 'mapping', $mapping);
 
         $reflectionMethod = new ReflectionMethod(
-            'Bigfork\SilverStripeOAuth\Client\Mapper\GenericMemberMapper',
+            GenericMemberMapper::class,
             'getMapping'
         );
         $reflectionMethod->setAccessible(true);
@@ -60,7 +61,7 @@ class GenericMemberMapperTest extends LoginTestCase
         $member = new Member;
 
         $mockResourceOwner = $this->getConstructorlessMock(
-            'League\OAuth2\Client\Provider\GenericResourceOwner',
+            GenericResourceOwner::class,
             ['toArray', 'getLastName', 'getEmail']
         );
         $mockResourceOwner->expects($this->at(0))
@@ -74,7 +75,7 @@ class GenericMemberMapperTest extends LoginTestCase
             ->will($this->returnValue('foo.bar@example.com'));
 
         $mockMapper = $this->getConstructorlessMock(
-            'Bigfork\SilverStripeOAuth\Client\Mapper\GenericMemberMapper',
+            GenericMemberMapper::class,
             ['getMapping']
         );
         $mockMapper->expects($this->once())
