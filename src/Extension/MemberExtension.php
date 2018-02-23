@@ -5,6 +5,11 @@ namespace Bigfork\SilverStripeOAuth\Client\Extension;
 use Bigfork\SilverStripeOAuth\Client\Model\Passport;
 use SilverStripe\Core\Extension as SilverStripeExtension;
 
+/**
+ * Class MemberExtension
+ * @package Bigfork\SilverStripeOAuth\Client\Extension
+ * @param SilverStripe\Security\Member $owner
+ */
 class MemberExtension extends SilverStripeExtension
 {
     /**
@@ -26,6 +31,8 @@ class MemberExtension extends SilverStripeExtension
      */
     public function onBeforeDelete()
     {
-        $this->owner->Passports()->removeAll();
+        foreach($this->owner->Passports() as $passport){
+            $passport->delete();
+        }
     }
 }
